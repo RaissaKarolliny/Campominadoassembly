@@ -20,10 +20,10 @@ plantBombs:
 	move $s2, $a0  							# row = rand() % SIZE;
 	syscall 
 	move $s3, $a0  							# column = rand() % SIZE;
-	sll $t0, $s2, 5
-	sll $t1, $s3, 2
-	add $t2, $t0, $t1
-	add $t0, $t2, $s0
+	sll $t0, $s2, 5 # i* 32
+	sll $t1, $s3, 2 # j*4
+	add $t2, $t0, $t1 # i*32 + j*4
+	add $t0, $t2, $s0 # (i*32 + j*4) + i
 	lw $t1,0 ($t0)
 	li $t2, -1
 	beq $t2, $t1, do_cb #  while (board[row][column] == -1);

@@ -1,32 +1,3 @@
-    /*
-    * minesweeper.c
-    *
-    * Minesweeper Game Implementation
-    * Created by: Ramon Nepomuceno
-    * Professor of Computer Science
-    * Federal University of Cariri (UFCA)
-    *
-    * This code is developed for the Computer Architecture course during the 2023.2 semester.
-    *
-    * Description:
-    *   - The program implements a console-based Minesweeper game.
-    *   - Players can reveal cells and avoid hitting bombs to win the game.
-    *   - Developed as a practical exercise for learning computer architecture concepts.
-    *
-    * File Structure:
-    *   - The code includes functions for initializing the board, placing bombs, printing the board,
-    *     counting adjacent bombs, revealing adjacent cells, playing the game, and checking for victory.
-    *
-    * Usage:
-    *   - Compile the code using a C compiler, such as GCC.
-    *   - Run the compiled executable to play the Minesweeper game in the console.
-    *
-    * Note: This code was created by Ramon Nepomuceno for educational purposes.
-    * Feel free to modify and distribute it for educational use.
-    *
-    * 
-    */
-
     #include <stdio.h>
     #include <stdlib.h>
     #include <time.h>
@@ -34,25 +5,27 @@
     #define SIZE 8
     #define BOMB_COUNT 10
 
+    int row;
+
     void initializeBoard(int board[][SIZE]) {
-        // Initializes the board with zeros
+        // Inicializa o tabuleiro com zeros
         for (int i = 0; i < SIZE; ++i) {
             for (int j = 0; j < SIZE; ++j) {
-                board[i][j] = -2; // -2 means no bomb
+                board[i][j] = -2; // Atribuindo -2 a todas as casas; -2 significa sem bombas
             }
         }
     }
 
     void placeBombs(int board[][SIZE]) {
         srand(time(NULL));
-        // Places bombs randomly on the board
+        // Usa a rand para colocar bombas em posições aleatórias do tabuleiro
         for (int i = 0; i < BOMB_COUNT; ++i) {
             int row, column;
             do {
                 row = rand() % SIZE;
                 column = rand() % SIZE;
-            } while (board[row][column] == -1);
-            board[row][column] = -1; // -1 means bomb present
+            } while (board[row][column] == -1); // garante que uma bomba não será colocada onde já tem uma
+            board[row][column] = -1; // -1 significa que tem uma bomba naquela casa
         }
     }
 
@@ -86,9 +59,12 @@
         int count = 0;
         for (int i = row - 1; i <= row + 1; ++i) {
             for (int j = column - 1; j <= column + 1; ++j) {
-                if (i >= 0 && i < SIZE && j >= 0 && j < SIZE && board[i][j] == -1) {
+                if (i >= 0 ) {
+                        if( i < SIZE )
+                            if( j >= 0 j < SIZE && board[i][j] == -1)
                     count++;
                 }
+
             }
         }
         return count;
@@ -97,7 +73,7 @@
     void revealAdjacentCells(int board[][SIZE], int row, int column) {
         // Reveals the adjacent cells of an empty cell
         for (int i = row - 1; i <= row + 1; ++i) {
-            for (int j = column - 1; j <= column + 1; ++j) {
+            for (int j = colum  n - 1; j <= column + 1; ++j) {
                 if (i >= 0 && i < SIZE && j >= 0 && j < SIZE && board[i][j] == -2) {
                     int x = countAdjacentBombs(board, i, j); // Marks as revealed
                     board[i][j] = x;
@@ -109,7 +85,6 @@
     }
 
     int play(int board[][SIZE], int row, int column) {
-        // Performs the move
         if (board[row][column] == -1) {
             return 0; // Player hit a bomb, game over
         }
@@ -119,7 +94,7 @@
             if (!x)
                 revealAdjacentCells(board, row, column); // Reveals adjacent cells
         }
-        return 1; // Game continues
+        return 1;
     }
 
     int checkVictory(int board[][SIZE]) {

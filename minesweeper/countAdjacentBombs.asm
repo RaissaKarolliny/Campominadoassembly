@@ -3,39 +3,42 @@
 .globl countAdjacentBombs
 
 countAdjacentBombs:
-# your code here 
 save_context
- #$to: contador $t1:row, $t2:col
- li $t0,0 #aqui inicializamos nosso contador
- sw $t5,8 #size
+move $s0,$a2 #recebendo a pos ini da matriz
+move $s1,$a0 # passanso i para s1
+move $s2,$a1 # passando j para s2
+
+ addi $t3,$s1,1 #pegamos i somamos 1 e colocamos na variavel de controle
+ addi $t4,$s2,1
  
- 
- addi $t3,$t1,1
- addi $t4,$t2,1
- 
- addi $t1,$t1,-2
- addi $t2,$t2,-1
+ addi $s1,$s1,-2 #subtraindo para irmos subindo o valor
+ addi $s2,$s2,-1 
  
  for_contadj_i:
-   addi $t1,$t1,1
-   bgt $t1,$t3, final
-   addi $t2,$t4,-2
+   addi $s1,$s1,1
+   bgt $s1,$t3, final
+   addi $s2,$t4,-2
    for_contadj_j:
- 	bgt $t2,$t4, for_contadj_i
-	blt $t1,$zero, else
-	bge $t1,$t5, else
-	blt $t2,$zero, else
-	bge $t2,$t5, else
-	mul $t6,$t1,$t5 # t6 receber t1=1 * t5= 8
-	add $t6,$t6,$t2 #t6 recebe o resultado anterior e soma com o j:t2
+ 	bgt $s2,$t4, for_contadj_i
+	blt $s1,$zero, else
+	bge $s1,$t5, else
+	blt $s2,$zero, else
+	bge $s2,$t5, else
+	mul $t6,$s1,$t5 # t6 receber t1=1 * t5= 8
+	add $t6,$t6,$s2 #t6 recebe o resultado anterior e soma com o j:t2
 	sll $t6,$t6,2 # t6 recebe o res anterior e multipliva por 4. da 28 a 30 fazemos isso ((i*size +j)*4)
-	add $t6,$t6,256 #((i*size +j)*4)+256, comecando do inicio da matriz
+	add $t6,$t6,$s0 #somando com a pos ini 
+	lw $t9, 0 ($t6) #acessando valor que está no indice t6 e colocando em t9
 	li  $t7,-1   #salvando o -1 para usar posteriormente
-	bne $t6,$t7,else
+	bne $t9,$t7,else
 	addi $t0,$t0,1
 	else:
-	addi $t2,$t2,1
+	addi $s2,$s2,1
 	j for_contadj_j
+	final:
+	move $v0, $t0 # passando o numero de bombas
+	restore_context
+	jr $ra
  
 
  

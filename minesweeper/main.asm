@@ -51,22 +51,23 @@ main:
   
   addi $sp, $sp, -4
   sw $s0, 0 ($sp)
-  move $a0, $s2
-  move $a1, $s3
+  move $a0, $s2  # movendo o i para a0
+  move $a1, $s3  # movendo j para a1
+  move $a2, $s0 # movendo a pos ini de $s0 para $a2
   jal play
   addi $sp, $sp, 4
   bne $v0, $zero, else_if_main 	# if (!play(board, row, column)) {
-    li $s1, 0										# gameActive = 0;
-  la $a0, msg_lose							# printf("Oh no! You hit a bomb! Game over.\n");
+    li $s1, 0						# gameActive = 0;
+  la $a0, msg_lose		# printf("Oh no! You hit a bomb! Game over.\n");
   li $v0, 4
   syscall
   j end_if_main
   
  else_if_main:
  	move $a0, $s0
-  jal checkVictory							# else if (checkVictory(board)) {
+  jal checkVictory				# else if (checkVictory(board)) {
   beq $v0, $zero, end_if_main
-  la $a0, msg_win								# printf("Congratulations! You won!\n");
+  la $a0, msg_win		# printf("Congratulations! You won!\n");
   li $v0, 4
   syscall
   li $s1, 0											# gameActive = 0; // Game ends
