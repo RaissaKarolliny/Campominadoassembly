@@ -26,3 +26,10 @@
   lw $ra, 32 ($sp)
   addi $sp, $sp, 36
 .end_macro
+
+.macro acesso
+	sll $t6, $s1, 5 # i*8
+   	sll $t8, $s2, 2 # j
+   	add $t6, $t6, $t8
+   	add $t6, $t6, $s0
+.end_macro

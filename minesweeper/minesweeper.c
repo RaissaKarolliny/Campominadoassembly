@@ -59,12 +59,9 @@
         int count = 0;
         for (int i = row - 1; i <= row + 1; ++i) {
             for (int j = column - 1; j <= column + 1; ++j) {
-                if (i >= 0 ) {
-                        if( i < SIZE )
-                            if( j >= 0 j < SIZE && board[i][j] == -1)
+                if (i >= 0 && i < SIZE && j >= 0 && j < SIZE && board[i][j] == -1) {
                     count++;
                 }
-
             }
         }
         return count;

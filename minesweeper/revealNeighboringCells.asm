@@ -7,9 +7,8 @@ save_context
 move $s0,$a2 #recebendo a pos ini da matriz
 move $s1,$a0 # passanso i para s1
 move $s2,$a1 # passando j para s2
-#lembar do $ra
+
  li $t5,SIZE #size
- 
  
  addi $t3,$s1,1
  addi $t4,$s2,1
@@ -37,16 +36,19 @@ move $s2,$a1 # passando j para s2
 	move $a0, $s0
 	move $a1, $t1
 	move $a2, $t2
+	
 	jal countAdjacentBombs
+	
 	move $t0, $v0 # passando o numero de bombas
 	sw $t0, 0($t6)
-	bne $t0,$zero,revelado
-	jal revealNeighboringCells	
+	bne $t0,$zero,else
+	jal revealNeighboringCells
+	
 	else:
 	addi $s2,$s2,1
 	j for_contadj_j
+	
 	final:
 	restore_context
 	jr $ra
-	revelado:
 	

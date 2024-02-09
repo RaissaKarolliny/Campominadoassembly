@@ -55,6 +55,7 @@ main:
   move $a1, $s3  # movendo j para a1
   move $a2, $s0 # movendo a pos ini de $s0 para $a2
   jal play
+  
   addi $sp, $sp, 4
   bne $v0, $zero, else_if_main 	# if (!play(board, row, column)) {
     li $s1, 0						# gameActive = 0;

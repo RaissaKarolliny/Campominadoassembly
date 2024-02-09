@@ -88,12 +88,12 @@ printBoard:
   li $a0, 32 									# print(" ")
   syscall
   	
-  sll $t2, $t0, 5
+  	sll $t2, $t0, 5
 	sll $t3, $t1, 2
-	
 	add $t4, $t2, $t3
 	add $t3, $t4, $s0
-	lw  $t4, 0 ($t3)
+	
+	lw  $t4, 0($t3)
 	li $t7, -1
 	bne $t4, $t7, elseif_imt		# if (board[i][j] == -1 && showBombs) {
 	beqz $s1, elseif_imt		
