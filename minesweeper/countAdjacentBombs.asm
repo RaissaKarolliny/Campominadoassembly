@@ -40,12 +40,10 @@ countAdjacentBombs:
    mul $t6,$s1,$t5 # t6 receber t1=1 * t5= 8
    add $t6,$t6,$s2 #t6 recebe o resultado anterior e soma com o j:t2
    sll $t6,$t6,2 # t6 recebe o res anterior e multipliva por 4. da 28 a 30 fazemos isso ((i*size +j)*4)
-   add $t6,$t6,$s0
+   add $s6,$t6,$s0
     
-   lw $t9, 0 ($t6) #acessando valor que está no indice t6 e colocando em t9
-   
+   lw $t9, 0 ($s6) #acessando valor que está no indice t6 e colocando em t9
    bne $t9,$t7,else
-   
    addi $t0,$t0,1
    
  else:
@@ -54,7 +52,7 @@ countAdjacentBombs:
   
  final:
   restore_context
-  move $v0,  $t0 # passando o numero de bombas
+  move $v0, $t0 # passando o numero de bombas
   jr $ra
  
 

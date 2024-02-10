@@ -1,3 +1,17 @@
+#include <stdio.h>
+
+void teste(int x){
+    x++;
+    if(x!=4){
+        teste(x);
+    }
+    printf("contando\n");
+}
+
+int main(){
+    teste(0);
+}
+
     #include <stdio.h>
     #include <stdlib.h>
     #include <time.h>
@@ -88,7 +102,7 @@
         if (board[row][column] == -2) {
             int x = countAdjacentBombs(board, row, column); // Marks as revealed
             board[row][column] = x;
-            if (!x)
+            if (x==0)
                 revealAdjacentCells(board, row, column); // Reveals adjacent cells
         }
         return 1;

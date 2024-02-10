@@ -21,9 +21,9 @@ play:
  mul $t6,$s1,$t5 # t6 receber t1=1 * t5= 8
  add $t6,$t6,$s2 #t6 recebe o resultado anterior e soma com o j:t2
  sll $t6,$t6,2 # t6 recebe o res anterior e multipliva por 4. da 28 a 30 fazemos isso ((i*size +j)*4)
- add $t6,$t6,$s0
+ add $s6,$t6,$s0
  
- lw $t9, 0 ($t6) #acessando valor que está no indice t6 e colocando em t9
+ lw $t9, 0($s6) #acessando valor que está no indice t6 e colocando em t9
 #=========================!>
  
 #Condicionais
@@ -34,29 +34,26 @@ play:
  
 #Salvando dados e chamando a função 'countAdjacentBombs'
 #<!=========================
- move $a0, $s2  # movendo o i para a0
- move $a1, $s3  # movendo j para a1
+ move $a0, $s1  # movendo o i para a0
+ move $a1, $s2  # movendo j para a1
  move $a2, $s0 # movendo a pos ini de $s0 para $a2
  
  jal countAdjacentBombs
 #=========================!>
- mul $t6,$s1,$t5 # t6 receber t1=1 * t5= 8
- add $t6,$t6,$s2 #t6 recebe o resultado anterior e soma com o j:t2
- sll $t6,$t6,2 # t6 recebe o res anterior e multipliva por 4. da 28 a 30 fazemos isso ((i*size +j)*4)
- add $t6,$t6,$s0
    
  move $t0,$v0 # t0 recebe o num de bombas
- sw $t0,0($t6) # passando o nmero de bombas para a posição
+ sw $t0, 0($s6) # passando o nmero de bombas para a posição
  
  bne $t0,$zero,revelado
  
 #Salvando dados e chamando a função 'revealNeighboringCells'
 #<!=========================
- move $a0, $s2  # movendo o i para a0
- move $a1, $s3  # movendo j para a1
+ move $a0, $s1  # movendo o i para a0
+ move $a1, $s2  # movendo j para a1
  move $a2, $s0 # movendo a pos ini de $s0 para $a2
  
  jal revealNeighboringCells
+ 
 #=========================!>
  
  revelado:

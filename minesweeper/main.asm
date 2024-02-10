@@ -58,7 +58,7 @@ main:
   
   addi $sp, $sp, 4
   bne $v0, $zero, else_if_main 	# if (!play(board, row, column)) {
-    li $s1, 0						# gameActive = 0;
+  li $s1, 0						# gameActive = 0;
   la $a0, msg_lose		# printf("Oh no! You hit a bomb! Game over.\n");
   li $v0, 4
   syscall

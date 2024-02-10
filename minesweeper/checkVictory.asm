@@ -18,8 +18,8 @@ save_context
  	 mul $t6,$t1,$t5 # t6 receber t1=1 * t5= 8
  	 add $t6,$t6,$t2 #t6 recebe o resultado anterior e soma com o j:t2
  	 sll $t6,$t6,2 # t6 recebe res anterior e mul por 4. da 28 a 30 fazemos((i*size +j)*4)
- 	 add $t6,$t6,$s0
- 	 lw $t9, 0 ($t6) #acessando valor que está no indice t6 e colocando em t9
+ 	 add $s6,$t6,$s0
+ 	 lw $t9,0 ($s6) #acessando valor que está no indice t6 e colocando em t9
  	 
  	 addi $t2,$t2,1
  	 blt $t9,$zero,for_j #se boar[1][j] < o, volta pro for j
