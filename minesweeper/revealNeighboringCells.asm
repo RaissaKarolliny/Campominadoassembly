@@ -6,31 +6,27 @@ revealNeighboringCells:
 save_context
 
 #Recebendo dados e definindo valores de controle
-#<!=========================
  move $s0,$a2 #recebendo a pos ini da matriz
  move $s1,$a0 # passanso i para s1
  move $s2,$a1 # passando j para s2
 
- addi $t3,$s1,1 #pegamos i somamos 1 e colocamos na variavel de controle
- addi $t4,$s2,1
+ addi $s3,$s1,1 #pegamos i somamos 1 e colocamos na variavel de controle
+ addi $s4,$s2,1
  
  addi $s1,$s1,-2 #subtraindo para irmos subindo o valor
  addi $s2,$s2,-1 
  
  li $s7,-2 #salvando o -2 para usar posteriormente
  li $t5,SIZE
-#=========================!>
 
 #For i para a contagem
-#<!=========================
  for_contadj_i:
   addi $s1,$s1,1
-  bgt $s1,$t3, final
-  addi $s2,$t4,-2
+  bgt $s1,$s3, final
+  addi $s2,$s4,-2
   #For j para a contagem
-  #<!=========================
   for_contadj_j:
-   bgt $s2,$t4, for_contadj_i
+   bgt $s2,$s4, for_contadj_i
    blt $s1,$zero, else
    bge $s1,$t5, else
    blt $s2,$zero, else
