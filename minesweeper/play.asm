@@ -5,55 +5,52 @@
 play:
  save_context
 
-#Recebendo dados e definindo valores de controle
- move $s0, $a2 #recebendo a pos ini da matriz
- move $s1, $a0 # passanso i para s1
- move $s2, $a1 # passando j para s2
+# Recebendo dados e definindo valores de controle
+ move $s0, $a2  # $s0 recebe a posição inicial da matriz
+ move $s1, $a0  # $s1 recebe o valor de i (linha)
+ move $s2, $a1  # $s2 recebe o valor de j (coluna)
  
- li $t5, SIZE #size
- li $s7, -1   #salvando o -1 para usar posteriormente
- li $t8, -2
+ li $t5, SIZE   # Carrega o tamanho da matriz (assumindo que SIZE é uma constante definida em 'macros.asm')
+ li $s7, -1     # Define -1 para uso posterior
+ li $t8, -2     # Define -2 para uso posterior
 
-#Acessa valor da matriz
- mul $t6,$s1,$t5 # t6 receber t1=1 * t5= 8
- add $t6,$t6,$s2 #t6 recebe o resultado anterior e soma com o j:t2
- sll $t6,$t6,2 # t6 recebe o res anterior e multipliva por 4. da 28 a 30 fazemos isso ((i*size +j)*4)
- add $s6,$t6,$s0
+# Acessando valor da matriz
+ mul $t6, $s1, $t5  # $t6 = i * SIZE
+ add $t6, $t6, $s2  # $t6 = (i * SIZE) + j
+ sll $t6, $t6, 2    # $t6 = $t6 * 4 (multiplicando por 4 para acessar a posição na memória)
+ add $s6, $t6, $s0  # $s6 = endereço base da matriz + (i * SIZE + j) * 4
  
- lw $t9, 0($s6) #acessando valor que está no indice t6 e colocando em t9
+ lw $t9, 0($s6)     # Carrega o valor da matriz no endereço calculado para $t9
  
-#Condicionais
- beq $t9,$s7, perdeu
- bne $t9,$t8, revelado
+# Condições
+ beq $t9, $s7, perdeu    # Se o valor for -1, o jogador perdeu
+ bne $t9, $t8, revelado  # Se o valor não for -2, já foi revelado ou é uma bomba
  
-#Salvando dados e chamando a função 'countAdjacentBombs'
- move $a0, $s1  # movendo o i para a0
- move $a1, $s2  # movendo j para a1
- move $a2, $s0 # movendo a pos ini de $s0 para $a2
+# Salvando dados e chamando a função 'countAdjacentBombs'
+ move $a0, $s1  # Passando i para o primeiro argumento
+ move $a1, $s2  # Passando j para o segundo argumento
+ move $a2, $s0  # Passando a posição inicial da matriz para o terceiro argumento
  
- jal countAdjacentBombs
-
- move $t0,$v0 # t0 recebe o num de bombas
- sw $t0, 0($s6) # passando o nmero de bombas para a posição
+ jal countAdjacentBombs  # Chamada de função para contar bombas adjacentes
  
- bne $t0,$zero,revelado
+ move $t0, $v0  # $t0 recebe o número de bombas contadas
+ sw $t0, 0($s6)  # Salvando o número de bombas na posição da matriz
  
-#Salvando dados e chamando a função 'revealNeighboringCells'
-
- move $a0, $s1  # movendo o i para a0
- move $a1, $s2  # movendo j para a1
- move $a2, $s0 # movendo a pos ini de $s0 para $a2
+ bne $t0, $zero, revelado  # Se há bombas adjacentes, continuar revelando células vizinhas
  
- jal revealNeighboringCells
+# Salvando dados e chamando a função 'revealNeighboringCells'
+ move $a0, $s1  # Passando i para o primeiro argumento
+ move $a1, $s2  # Passando j para o segundo argumento
+ move $a2, $s0  # Passando a posição inicial da matriz para o terceiro argumento
+ 
+ jal revealNeighboringCells  # Chamada de função para revelar células vizinhas
  
  revelado:
- restore_context
- li $v0, 1
- jr $ra
- 
+ restore_context  # Restaurando o contexto
+ li $v0, 1         # Definindo retorno como 1 (célula revelada)
+ jr $ra            # Retornando
+
  perdeu:
- restore_context
- li $v0, 0
- jr $ra
- 
-	
+ restore_context  # Restaurando o contexto
+ li $v0, 0         # Definindo retorno como 0 (jogador perdeu)
+ jr $ra            # Retornando

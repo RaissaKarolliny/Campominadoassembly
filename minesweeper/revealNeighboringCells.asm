@@ -3,68 +3,66 @@
 .globl revealNeighboringCells
 
 revealNeighboringCells:
-save_context
+	save_context
 
-#Recebendo dados e definindo valores de controle
- move $s0,$a2 #recebendo a pos ini da matriz
- move $s1,$a0 # passanso i para s1
- move $s2,$a1 # passando j para s2
+# Recebendo dados e definindo valores de controle
+	move $s0, $a2  # Recebe a posição inicial da matriz
+	move $s1, $a0  # Recebe o valor de i (linha)
+	move $s2, $a1  # Recebe o valor de j (coluna)
 
- addi $s3,$s1,1 #pegamos i somamos 1 e colocamos na variavel de controle
- addi $s4,$s2,1
+	addi $s3, $s1, 1  # Incrementa i para iterar sobre as células acima
+	addi $s4, $s2, 1  # Incrementa j para iterar sobre as células à direita
  
- addi $s1,$s1,-2 #subtraindo para irmos subindo o valor
- addi $s2,$s2,-1 
+	addi $s1, $s1, -2  # Decrementa i para iterar sobre as células abaixo
+	addi $s2, $s2, -1  # Decrementa j para iterar sobre as células à esquerda
  
- li $s7,-2 #salvando o -2 para usar posteriormente
- li $t5,SIZE
+	li $s7, -2  # Define -2 para uso posterior (valor de célula não revelada)
+	li $t5, SIZE  # Carrega o tamanho da matriz (assumindo que SIZE é uma constante definida em 'macros.asm')
 
-#For i para a contagem
- for_contadj_i:
-  addi $s1,$s1,1
-  bgt $s1,$s3, final
-  addi $s2,$s4,-2
-  #For j para a contagem
-  for_contadj_j:
-   bgt $s2,$s4, for_contadj_i
-   blt $s1,$zero, else
-   bge $s1,$t5, else
-   blt $s2,$zero, else
-   bge $s2,$t5, else
+# Loop for para a contagem de i
+	for_contadj_i:
+		addi $s1, $s1, 1  # Incrementa i
+		bgt $s1, $s3, final  # Se i for maior que s3, termina o loop
+		addi $s2, $s4, -2  # Reinicializa j para a posição da célula à esquerda da linha atual
+
+  # Loop for para a contagem de j
+	for_contadj_j:
+		bgt $s2, $s4, for_contadj_i  # Se j for maior que s4, termina o loop de j e continua com o próximo i
+		blt $s1, $zero, else  # Se i for menor que zero, vá para 'else'
+		bge $s1, $t5, else  # Se i for maior ou igual ao tamanho da matriz, vá para 'else'
+		blt $s2, $zero, else  # Se j for menor que zero, vá para 'else'
+		bge $s2, $t5, else  # Se j for maior ou igual ao tamanho da matriz, vá para 'else'
    
-   mul $t6,$s1,$t5 # t6 receber t1=1 * t5= 8
-   add $t6,$t6,$s2 #t6 recebe o resultado anterior e soma com o j:t2
-   sll $t6,$t6,2 # t6 recebe o res anterior e multipliva por 4. da 28 a 30 fazemos isso ((i*size +j)*4)
-   add $s6,$t6,$s0
+		mul $t6, $s1, $t5  # Calcula o índice da célula (i * SIZE)
+		add $t6, $t6, $s2  # Adiciona a posição de j ao índice
+		sll $t6, $t6, 2  # Multiplica o índice por 4 para acessar a posição na memória
+		add $s6, $t6, $s0  # Calcula o endereço da célula na matriz
    
-   lw $t9, 0 ($s6) #acessando valor que está no indice t6 e colocando em t9
+		lw $t9, 0 ($s6)  # Carrega o valor da célula
+		bne $t9, $s7, else  # Se a célula já estiver revelada, vá para 'else'
    
-   bne $t9,$s7,else
+		move $a0, $s1  # Movendo i para o primeiro argumento
+		move $a1, $s2  # Movendo j para o segundo argumento
+		move $a2, $s0  # Movendo a posição inicial da matriz para o terceiro argumento
    
-   move $a0, $s1  # movendo o i para a0
-   move $a1, $s2  # movendo j para a1
-   move $a2, $s0 # movendo a pos ini de $s0 para $a2
+		jal countAdjacentBombs  # Chamada de função para contar bombas adjacentes
    
-   jal countAdjacentBombs
+		move $t0, $v0  # $t0 recebe o número de bombas
+		sw $t0, 0 ($s6)  # Salvando o número de bombas na posição
    
-   move $t0,$v0 # t0 recebe o num de bombas
-   sw $t0, 0($s6) # passando o nmero de bombas para a posição
+		bne $t0, $zero, else  # Se há bombas adjacentes, vá para 'else'
    
-   bne $t0,$zero, else
+		move $a0, $s1  # Movendo i para o primeiro argumento
+		move $a1, $s2  # Movendo j para o segundo argumento
+		move $a2, $s0  # Movendo a posição inicial da matriz para o terceiro argumento
    
-   move $a0, $s1  # movendo o i para a0
-   move $a1, $s2  # movendo j para a1
-   move $a2, $s0 # movendo a pos ini de $s0 para $a2
+		jal revealNeighboringCells  # Chamada de função para revelar células vizinhas
    
-   jal revealNeighboringCells
-   
- else:
-  addi $s2,$s2,1
-  j for_contadj_j
+	else:
+		addi $s2, $s2, 1  # Incrementa j
+		j for_contadj_j  # Volta para o loop de j
   
- final:
-  restore_context
-  jr $ra
- 
-
- 
+  # Final do loop
+ 	final:
+		restore_context  # Restaurando o contexto
+		jr $ra  # Retorna

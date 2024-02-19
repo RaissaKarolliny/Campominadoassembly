@@ -3,57 +3,55 @@
 .globl countAdjacentBombs
 
 countAdjacentBombs:
- save_context
+	save_context
 
-#Recebendo dados e definindo valores de controle
-#<!=========================
- move $s0,$a2 #recebendo a pos ini da matriz
- move $s1,$a0 # passanso i para s1
- move $s2,$a1 # passando j para s2
- move $t0,$zero
+# Recebendo dados e definindo valores de controle
+	
+	move $s0, $a2  # Recebe a posição inicial da matriz
+	move $s1, $a0  # Recebe o valor de i (linha)
+	move $s2, $a1  # Recebe o valor de j (coluna)
+	move $t0, $zero  # Inicializa o contador de bombas adjacentes como zero
 
- addi $s3,$s1,1 #pegamos i somamos 1 e colocamos na variavel de controle
- addi $s4,$s2,1
+	addi $s3, $s1, 1  # Incrementa i para iterar sobre as células acima
+	addi $s4, $s2, 1  # Incrementa j para iterar sobre as células à direita
  
- addi $s1,$s1,-2 #subtraindo para irmos subindo o valor
- addi $s2,$s2,-1 
+	addi $s1, $s1, -2  # Decrementa i para iterar sobre as células abaixo
+	addi $s2, $s2, -1  # Decrementa j para iterar sobre as células à esquerda
  
- li $s7,-1   #salvando o -1 para usar posteriormente
- li $t5,SIZE
-#=========================!>
+	li $s7, -1   # Define -1 para uso posterior (valor de célula de bomba)
+	li $t5, SIZE  # Carrega o tamanho da matriz (assumindo que SIZE é uma constante definida em 'macros.asm')
+	
 
-#For i para a contagem
-#<!=========================
- for_contadj_i:
-  addi $s1,$s1,1
-  bgt $s1,$s3, final
-  addi $s2,$s4,-2
-  #For j para a contagem
-  #<!=========================
-  for_contadj_j:
-   bgt $s2,$s4, for_contadj_i
-   blt $s1,$zero, else
-   bge $s1,$t5, else
-   blt $s2,$zero, else
-   bge $s2,$t5, else
-   
-   mul $t6,$s1,$t5 # t6 receber t1=1 * t5= 8
-   add $t6,$t6,$s2 #t6 recebe o resultado anterior e soma com o j:t2
-   sll $t6,$t6,2 # t6 recebe o res anterior e multipliva por 4. da 28 a 30 fazemos isso ((i*size +j)*4)
-   add $s6,$t6,$s0
-    
-   lw $t9, 0 ($s6) #acessando valor que está no indice t6 e colocando em t9
-   bne $t9,$s7,else
-   addi $t0,$t0,1
-   
- else:
-  addi $s2,$s2,1
-  j for_contadj_j
+# Loop for para a contagem de i
+	
+	for_contadj_i:
+		addi $s1, $s1, 1  # Incrementa i
+		bgt $s1, $s3, final  # Se i for maior que s3, termina o loop
+		addi $s2, $s4, -2  # Reinicializa j para a posição da célula à esquerda da linha atual
+
+# Loop for para a contagem de j
   
- final:
-  restore_context
-  move $v0, $t0 # passando o numero de bombas
-  jr $ra
+	for_contadj_j:
+		bgt $s2, $s4, for_contadj_i  # Se j for maior que s4, termina o loop de j e continua com o próximo i
+		blt $s1, $zero, else  # Se i for menor que zero, vá para 'else'
+		bge $s1, $t5, else  # Se i for maior ou igual ao tamanho da matriz, vá para 'else'
+		blt $s2, $zero, else  # Se j for menor que zero, vá para 'else'
+		bge $s2, $t5, else  # Se j for maior ou igual ao tamanho da matriz, vá para 'else'
+   
+		mul $t6, $s1, $t5  # Calcula o índice da célula (i * SIZE)
+		add $t6, $t6, $s2  # Adiciona a posição de j ao índice
+		sll $t6, $t6, 2  # Multiplica o índice por 4 para acessar a posição na memória
+		add $s6, $t6, $s0  # Calcula o endereço da célula na matriz
  
-
- 
+		lw $t9, 0 ($s6)  # Carrega o valor da célula
+		bne $t9, $s7, else  # Se não for uma bomba, vá para 'else'
+		addi $t0, $t0, 1  # Incrementa o contador de bombas adjacentes
+   
+	else:
+		addi $s2, $s2, 1  # Incrementa j
+		j for_contadj_j  # Volta para o loop de j
+  
+	final:
+		restore_context  # Restaura o contexto
+		move $v0, $t0  # Move o número de bombas adjacentes para o retorno da função
+		jr $ra  # Retorna
